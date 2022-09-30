@@ -65,6 +65,12 @@ public class Cazador : MonoBehaviour
         transform.position = GameManager.Instance.SetObjectBoundPosition(transform.position);
     }
 
+    public void AddForce(Vector3 force)
+    {
+        _velocity += force;
+        _velocity = Vector3.ClampMagnitude(_velocity, _maxSpeed);
+    }
+
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;

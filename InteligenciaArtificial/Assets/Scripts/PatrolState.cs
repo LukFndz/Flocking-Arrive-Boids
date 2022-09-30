@@ -38,23 +38,27 @@ public class PatrolState : IState
                     _hunter.CurrentWayPoint = 0;
             }
 
-            Seek();
+            _hunter.AddForce(Pursuit());
         }
 
         _hunter.transform.position += _hunter.Velocity * Time.deltaTime;
         _hunter.transform.forward = _hunter.Velocity;
     }
 
-    private void Seek()
+    private Vector3 Pursuit()
     {
-        Vector3 desired;
-        desired = _hunter.wayPoints[_hunter.CurrentWayPoint].transform.position - _hunter.transform.position;
+        Vector3 futurePos = _hunter.wayPoints[_hunter.CurrentWayPoint].transform.position;
+
+        Vector3 desired = futurePos - _hunter.transform.position;
+
+        Debug.DrawLine(_hunter.transform.position, futurePos, Color.white);
         desired.Normalize();
         desired *= _hunter.MaxSpeed;
 
+        //Steering
         Vector3 steering = desired - _hunter.Velocity;
         steering = Vector3.ClampMagnitude(steering, _hunter.MaxForce);
 
-        _hunter.SetVelocity(Vector3.ClampMagnitude(_hunter.Velocity + steering, _hunter.MaxSpeed));
+        return steering;
     }
 }
