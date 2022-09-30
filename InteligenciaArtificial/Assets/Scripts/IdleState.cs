@@ -18,14 +18,13 @@ public class IdleState : IState
     public void ManualUpdate()
     {
         Advance();
-
         Idle();
     }
 
     public void Advance()
     {
         if (_hunter.Velocity != new Vector3(0, 0, 0))
-            _hunter.SetVelocity(new Vector3(0, 0, 0));    // Hunter stays idle...
+            _hunter.SetVelocity(new Vector3(0, 0, 0));
     }
 
     private void Idle()

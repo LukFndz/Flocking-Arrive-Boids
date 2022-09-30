@@ -6,7 +6,7 @@ public class StateMachine : MonoBehaviour
 {
     private Dictionary<string, IState> _stateDictionary = new Dictionary<string, IState>();
 
-    private IState _currentState = new EmptyState();
+    private IState _currentState;
 
     public void ManualUpdate()
     {
