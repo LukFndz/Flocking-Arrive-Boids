@@ -24,8 +24,8 @@ public class Spawner : MonoBehaviour
 
     private void Spawn()
     {
-        float x = Random.Range(-GameManager.Instance.BoundWidth, GameManager.Instance.BoundWidth);
-        float z = Random.Range(-GameManager.Instance.BoundHeight, GameManager.Instance.BoundHeight);
+        float x = Random.Range(-GameManager.Instance.BoundWidth / 2, GameManager.Instance.BoundWidth / 2);
+        float z = Random.Range(-GameManager.Instance.BoundHeight / 2, GameManager.Instance.BoundHeight / 2);
 
         Instantiate(_objectToSpawn, new Vector3(x, 0, z), transform.rotation);
 

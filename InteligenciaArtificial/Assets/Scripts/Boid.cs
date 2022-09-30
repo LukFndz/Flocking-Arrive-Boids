@@ -21,7 +21,6 @@ public class Boid : MonoBehaviour
     private Cazador _hunter;
 
     public static List<Boid> allBoids = new List<Boid>();
-
     private void Start()
     {
         _hunter = GameManager.Instance.hunter;
@@ -81,7 +80,7 @@ public class Boid : MonoBehaviour
         if (count == 0) return desired;
 
         desired /= count;
-        //return Seek(desired);
+
         desired -= transform.position;
 
         return CalculateSteering(desired);
@@ -128,9 +127,9 @@ public class Boid : MonoBehaviour
     {
         Vector3 desired;
 
-        Vector3 futurePos = _hunter.transform.position + _hunter.GetVelocity() * Time.deltaTime;
+        Vector3 pos = _hunter.transform.position + _hunter.Velocity * Time.deltaTime;
 
-        desired = futurePos - transform.position;
+        desired = pos - transform.position;
         desired.Normalize();
         desired *= _maxSpeed;
         desired *= -1;
@@ -144,8 +143,6 @@ public class Boid : MonoBehaviour
     {
         Vector3 desired;
         desired = target.transform.position - transform.position;
-
-        float dist = (target.transform.position - transform.position).magnitude;
 
         desired.Normalize();
         desired *= _maxSpeed;
@@ -175,7 +172,6 @@ public class Boid : MonoBehaviour
             Destroy(gameObject);
         }
     }
-
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.cyan;

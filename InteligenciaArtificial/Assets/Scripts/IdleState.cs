@@ -24,7 +24,7 @@ public class IdleState : IState
 
     public void Advance()
     {
-        if (_hunter.GetVelocity() != new Vector3(0, 0, 0))
+        if (_hunter.Velocity != new Vector3(0, 0, 0))
             _hunter.SetVelocity(new Vector3(0, 0, 0));    // Hunter stays idle...
     }
 

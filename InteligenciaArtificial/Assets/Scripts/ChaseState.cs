@@ -34,8 +34,8 @@ public class ChaseState : IState
         else
             _hunter.Target = null;
 
-        _hunter.transform.position += _hunter.GetVelocity() * Time.deltaTime;
-        _hunter.transform.forward = _hunter.GetVelocity();
+        _hunter.transform.position += _hunter.Velocity * Time.deltaTime;
+        _hunter.transform.forward = _hunter.Velocity;
     }
 
     private void Seek()
@@ -45,10 +45,10 @@ public class ChaseState : IState
         desired.Normalize();
         desired *= _hunter.MaxSpeed;
 
-        Vector3 steering = desired - _hunter.GetVelocity();
+        Vector3 steering = desired - _hunter.Velocity;
         steering = Vector3.ClampMagnitude(steering, _hunter.MaxForce);
 
-        _hunter.SetVelocity(Vector3.ClampMagnitude(_hunter.GetVelocity() + steering, _hunter.MaxSpeed));
+        _hunter.SetVelocity(Vector3.ClampMagnitude(_hunter.Velocity + steering, _hunter.MaxSpeed));
     }
 
     public void Rest()

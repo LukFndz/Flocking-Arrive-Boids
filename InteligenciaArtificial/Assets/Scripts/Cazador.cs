@@ -34,6 +34,7 @@ public class Cazador : MonoBehaviour
     public int CurrentWayPoint { get => _currentWayPoint; set => _currentWayPoint = value; }
     public bool IsResting { get => _isResting; set => _isResting = value; }
     public float CurrentStamina { get => _currentStamina; set => _currentStamina = value; }
+    public Vector3 Velocity { get => _velocity; set => _velocity = value; }
 
     private void Awake()
     {
@@ -57,11 +58,6 @@ public class Cazador : MonoBehaviour
     public void SetVelocity(Vector3 newVelocity)
     {
         _velocity = newVelocity;
-    }
-
-    public Vector3 GetVelocity()
-    {
-        return _velocity;
     }
 
     private void CheckBounds()

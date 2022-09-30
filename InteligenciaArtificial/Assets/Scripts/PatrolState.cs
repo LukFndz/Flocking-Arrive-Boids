@@ -20,18 +20,18 @@ public class PatrolState : IState
 
     public void Advance()
     {
-        Collider[] colls = Physics.OverlapSphere(_hunter.transform.position, _hunter.ViewRadius, 1 << 6);
+        Collider[] colliders = Physics.OverlapSphere(_hunter.transform.position, _hunter.ViewRadius, 1 << 6);
 
-        if (colls.Length > 0)
+        if (colliders.Length > 0)
         {
-            _hunter.Target = colls[0].transform.parent.root.gameObject.GetComponent<Boid>();
+            _hunter.Target = colliders[0].transform.parent.root.gameObject.GetComponent<Boid>();
             _sm.ChangeState("ChaseState");
         }
         else
         {
-            Vector3 pointDistance = _hunter.wayPoints[_hunter.CurrentWayPoint].transform.position - _hunter.transform.position;
+            Vector3 distance = _hunter.wayPoints[_hunter.CurrentWayPoint].transform.position - _hunter.transform.position;
 
-            if (pointDistance.magnitude < _hunter.stoppingDistance)
+            if (distance.magnitude < _hunter.stoppingDistance)
             {
                 _hunter.CurrentWayPoint++;
                 if (_hunter.CurrentWayPoint > _hunter.wayPoints.Length - 1)
@@ -41,8 +41,8 @@ public class PatrolState : IState
             Seek();
         }
 
-        _hunter.transform.position += _hunter.GetVelocity() * Time.deltaTime;
-        _hunter.transform.forward = _hunter.GetVelocity();
+        _hunter.transform.position += _hunter.Velocity * Time.deltaTime;
+        _hunter.transform.forward = _hunter.Velocity;
     }
 
     private void Seek()
@@ -52,9 +52,9 @@ public class PatrolState : IState
         desired.Normalize();
         desired *= _hunter.MaxSpeed;
 
-        Vector3 steering = desired - _hunter.GetVelocity();
+        Vector3 steering = desired - _hunter.Velocity;
         steering = Vector3.ClampMagnitude(steering, _hunter.MaxForce);
 
-        _hunter.SetVelocity(Vector3.ClampMagnitude(_hunter.GetVelocity() + steering, _hunter.MaxSpeed));
+        _hunter.SetVelocity(Vector3.ClampMagnitude(_hunter.Velocity + steering, _hunter.MaxSpeed));
     }
 }
