@@ -10,12 +10,14 @@ public class Boid : MonoBehaviour
     [Range(0.01f, 1f)]
     [SerializeField] private float _maxForce;
     [SerializeField] private float _viewRadius;
-    [Range(0f, 0.5f)]
+    [Range(0f, 1f)]
     [SerializeField] private float _cohesionWeight;
-    [Range(0.5f, 1f)]
+    [Range(0f, 1f)]
     [SerializeField] private float _alignWeight;
-    [Range(0.5f, 1f)]
+    [Range(0f, 1f)]
     [SerializeField] private float _separationWeight;
+
+    [SerializeField] private float _collideDistance;
 
     private float _separationRadius;
     private Cazador _hunter;
@@ -34,6 +36,7 @@ public class Boid : MonoBehaviour
     private void Update()
     {
         CheckBounds();
+        CheckCollision();
         Advance();
     }
     private void CheckBounds()
@@ -150,6 +153,15 @@ public class Boid : MonoBehaviour
         Vector3 steering = desired - _velocity;
         steering = Vector3.ClampMagnitude(steering, _maxForce);
 
+        Vector3 distance = target.transform.position - transform.position;
+
+        if (distance.magnitude < _collideDistance)
+        {
+            Food.allFoods.Remove(target.GetComponent<Food>());
+            Destroy(target.gameObject);
+        }
+
+
         _velocity = Vector3.ClampMagnitude(_velocity + steering, _maxSpeed);
     }
     Vector3 CalculateSteering(Vector3 desired)
@@ -164,14 +176,17 @@ public class Boid : MonoBehaviour
     {
         return _velocity;
     }
-    private void OnTriggerEnter(Collider other)
+    public void CheckCollision()
     {
-        if (other.gameObject.CompareTag("Hunter"))
+        Vector3 distance = _hunter.transform.position - transform.position;
+
+        if (distance.magnitude < _collideDistance)
         {
             allBoids.Remove(this);
             Destroy(gameObject);
         }
     }
+
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.cyan;

@@ -5,9 +5,10 @@ using UnityEngine;
 
 public class Food : MonoBehaviour
 {
-    private void OnTriggerEnter(Collider other)
+    public static List<Food> allFoods = new List<Food>();
+
+    private void Start()
     {
-        if (other.gameObject.layer == 6)
-            Destroy(this.gameObject);
+        allFoods.Add(this);
     }
 }
