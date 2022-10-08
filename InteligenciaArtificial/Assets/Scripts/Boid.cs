@@ -9,17 +9,19 @@ public class Boid : MonoBehaviour
     [SerializeField]private float _maxSpeed;
     [Range(0.01f, 1f)]
     [SerializeField] private float _maxForce;
+    [Range(0f, 4f)]
+    [SerializeField] private float _viewRadiusSeparation;
+    [Range(4f, 6f)]
     [SerializeField] private float _viewRadius;
-    [Range(0f, 1f)]
+    [Range(0f, 2f)]
     [SerializeField] private float _cohesionWeight;
-    [Range(0f, 1f)]
+    [Range(0f, 2f)]
     [SerializeField] private float _alignWeight;
-    [Range(0f, 1f)]
+    [Range(0f, 2.5f)]
     [SerializeField] private float _separationWeight;
 
     [SerializeField] private float _collideDistance;
 
-    private float _separationRadius;
     private Cazador _hunter;
 
     public static List<Boid> allBoids = new List<Boid>();
@@ -56,13 +58,13 @@ public class Boid : MonoBehaviour
             Collider[] colliders = Physics.OverlapSphere(transform.position, _viewRadius, 1 << 7);
 
             if (colliders.Length > 0)
-                Arrive(colliders[0].transform);
+                AddForce(Arrive(colliders[0].transform));
             else
                 AddForce(GetSeparation() * _separationWeight + GetAlignment() * _alignWeight + GetCohesion() * _cohesionWeight);
         }
 
         transform.position += _velocity * Time.deltaTime;
-        transform.forward = _velocity.normalized;
+        transform.forward = _velocity;
     }
     private Vector3 GetCohesion()
     {
@@ -97,7 +99,7 @@ public class Boid : MonoBehaviour
             if (boid == this) continue;
 
             Vector3 dist = boid.transform.position - transform.position;
-            if (dist.magnitude <= _viewRadius)
+            if (dist.magnitude < _viewRadiusSeparation)
             {
                 desired += dist;
             }
@@ -115,7 +117,7 @@ public class Boid : MonoBehaviour
         foreach (var item in allBoids)
         {
             if (item == this) continue;
-            if (Vector3.Distance(transform.position, item.transform.position) <= _viewRadius)
+            if (Vector3.Distance(transform.position, item.transform.position) < _viewRadius)
             {
                 desired += item._velocity;
                 count++;
@@ -142,27 +144,33 @@ public class Boid : MonoBehaviour
 
         _velocity = Vector3.ClampMagnitude(_velocity + steering, _maxSpeed);
     }
-    private void Arrive(Transform target)
+    private Vector3 Arrive(Transform target)
     {
-        Vector3 desired;
-        desired = target.transform.position - transform.position;
+        Vector3 desired = target.position - transform.position;
+        if (desired.magnitude <= _viewRadius)
+        {
+            float speed = _maxSpeed * (desired.magnitude / _viewRadius);
+            desired.Normalize();
+            desired *= speed;
+        }
+        else
+        {
+            desired.Normalize();
+            desired *= _maxSpeed;
+        }
 
-        desired.Normalize();
-        desired *= _maxSpeed;
+        Vector3 distance = target.position - transform.position;
+
+        if (distance.magnitude < _collideDistance)
+        {
+            Food.allFoods.Remove(target.gameObject.GetComponent<Food>());
+            Destroy(target.gameObject);
+        }
 
         Vector3 steering = desired - _velocity;
         steering = Vector3.ClampMagnitude(steering, _maxForce);
 
-        Vector3 distance = target.transform.position - transform.position;
-
-        if (distance.magnitude < _collideDistance)
-        {
-            Food.allFoods.Remove(target.GetComponent<Food>());
-            Destroy(target.gameObject);
-        }
-
-
-        _velocity = Vector3.ClampMagnitude(_velocity + steering, _maxSpeed);
+        return steering;
     }
     Vector3 CalculateSteering(Vector3 desired)
     {
@@ -192,7 +200,7 @@ public class Boid : MonoBehaviour
         Gizmos.color = Color.cyan;
         Gizmos.DrawWireSphere(transform.position, _viewRadius);
 
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, _separationRadius);
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, _viewRadiusSeparation);
     }
 }

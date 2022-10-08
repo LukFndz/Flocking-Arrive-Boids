@@ -13,6 +13,12 @@ public class GameManager : Singleton<GameManager>
     public float BoundHeight { get => boundHeight; set => boundHeight = value; }
     public float BoundWidth { get => boundWidth; set => boundWidth = value; }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+            Application.Quit();
+    }
+
     public Vector3 SetObjectBoundPosition(Vector3 pos)
     {
         float z = boundHeight / 2;
